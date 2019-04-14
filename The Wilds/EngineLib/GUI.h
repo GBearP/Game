@@ -12,11 +12,35 @@
 
 #define D3DFVF_GUI (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
+#define GUI_MAIN_SCREEN 1
+#define GUI_START_SCREEN 2
+#define GUI_CREDITS_SCREEN 3
+
+#define STATIC_TEXT_ID 1
+#define BUTTON_START_ID 2
+#define BUTTON_CREDITS_ID 3
+#define BUTTON_QUIT_ID 4
+#define	BUTTON_BACK_ID 5
+#define BUTTON_LEVEL_1_ID 6
+
+
+
+
+
 struct GUIVertex{
 	float x, y, z, rhw;
 	unsigned long color;
 	float tu, tv;
 };
+
+
+enum UIType
+{
+	ENTER,GAMING,EXIT
+}; 
+//self Beta
+/************************************Self Beta***********************************************
+*
 
 struct GUIControl {
 	int m_type;//控件类型,button.滚动轴等
@@ -32,10 +56,7 @@ struct GUIControl {
 	IDirect3DTexture9* m_voerTex;
 };
 
-enum UIType
-{
-	ENTER,GAMING,EXIT
-}; 
+
 
 //使用D3D接口的GUI系统
 //门面模式,有三个组件
@@ -125,6 +146,58 @@ public:
 	LPDIRECT3DVERTEXBUFFER9 GetBackDropBuffer() {
 		return m_backDropBuffer;
 	}
+};*/
+
+//book Beta
+//使用D3D接口的GUI系统
+//门面模式,有三个组件
+struct GUIControl {
+	int m_type;//控件类型,button.滚动轴等
+	int m_id;//控件ID
+	unsigned long m_color;//颜色
+	int m_listID;//控件在列表中的ID
+	float m_xPos, m_yPos;//控件在窗口的位置
+	float m_width, m_height;//控件宽度和高度
+	WCHAR* m_text;//文本指针
+	LPDIRECT3DTEXTURE9* m_backTexture;//背景贴图,
+	int m_upTex,m_downTex,m_voerTex;
+};
+
+
+
+
+class CD3DUIManager
+{
+private:
+	GUIControl* p_controls;    //button控件列表的指针
+	int controlsCount;
+	int m_backDropID;
+	
+public:
+	CD3DUIManager();
+	~CD3DUIManager() { Shutdown(); };
+
+	//创建字体加入字体列表中
+	bool CreateFonts(IDirect3DDevice9*device, LPCWSTR fontName, int size, int* fontID);
+	//加载图像文件,成为背景
+	bool AddBackDrop(int texID,int sID);
+	//创建没有事件响应的静态文本,显示工作组等等
+	bool AddStaticText(int id,/*wchar_t*/ LPCWSTR text, float x, float y, unsigned long color, int fontID);
+	//创建button
+	bool AddButton(int id, float x, float y ,int width,int height,int upID,int overID,int downID,unsigned int staticID);
+	void Shutdown();
+
+	//创建控件,获得控件,获得控件的计数
+	bool AddControl();
+	GUIControl* GetGUIControl(int id) {
+		if (id < 0 || id >= controlsCount) return NULL;
+		return &p_controls[id];
+	}
+	int GetControlsCount() {
+		return controlsCount;
+	}
+	
+
 };
 #endif // !GUI_H
 

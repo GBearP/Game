@@ -1,5 +1,10 @@
 #include"GameManager.h"
 //初始化窗口
+
+
+
+
+
 void GameManager::CreateWnd(HINSTANCE hInstance, int nCmdShow, WNDPROC WndProc) {
 	WNDCLASSEX wndClass;
 	wndClass.cbSize = sizeof(WNDCLASSEX);
@@ -30,13 +35,10 @@ void GameManager::CreateWnd(HINSTANCE hInstance, int nCmdShow, WNDPROC WndProc) 
 }
 //初始化引擎//
 bool GameManager::InitEngine(FULLSCREEN show) {
-	if (!CreateD3DRender(&gameRender)) {
-		return false;
-	}
-	if (!gameRender->Initialize(WIN_WIDTH, WIN_HEIGHT, hWnd, show)) {
-		return false;
-	}
+	if (!CreateD3DRender(&gameRender)) return false;
+	if (!gameRender->Initialize(WIN_WIDTH, WIN_HEIGHT, hWnd, show)) return false;
 	gameRender->SetBackColor(0, 0, 0);
+	//if (!gameRender.CreateText("Arial",0,true,19,g_arialID) return false;
 	return true;
 };
 //初始化游戏
@@ -132,3 +134,7 @@ void GameManager::ProcessGUI(bool LMBDown, int MouseX, int mouseY, void(*funcPtr
 void GameManager::LoadScene() {
 
 }
+
+bool InitMainUI() {}
+void MainCallback(int id, int state) {}
+void MainRender() {}

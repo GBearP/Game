@@ -38,6 +38,11 @@ public:
 	virtual void DisableSprites() = 0;
 	virtual int GetScreenWidth()=0;
 	virtual	int GetScreenHeight() = 0;
+
+	//创建UI 主要分为主界面UI,游戏中UI,游戏退出UI
+	virtual void CreateUI(UIType type) = 0;
+	virtual void CreateText(wchar_t* fontType, int id, bool set, int fontSize, int g_arialID) = 0;
+
 protected:
 	int m_screenWitdth;
 	int m_screenHeight;

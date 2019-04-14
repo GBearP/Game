@@ -10,6 +10,10 @@
 enum FULLSCREEN{
 	WIN, FULL
 };
+int g_mainGUI = -1;
+int g_startGUI = -1;
+int creaditsGUI = -1;
+int g_currentGUI = GUI_MAIN_SCREEN;
 
 class GameManager{
 private:
@@ -18,6 +22,7 @@ private:
 	HWND hWnd = NULL;
 	IDirect3DDevice9* device;
 	CD3DUIManager* GUI;
+	int g_arialID = -1;
 public:
 	GameManager()=default;
 	~GameManager()=default;
@@ -35,8 +40,7 @@ public:
 	//
 	void LoadScene();
 
-	//创建UI 主要分为主界面UI,游戏中UI,游戏退出UI
-	void CreateUI(UIType type);
+
 	//UI的窗口回调函数等等,或许要放进UIManager类里
 	void ProcessGUI(bool LMBDown, int MouseX, int mouseY, void(*funcPtr)(int id, int state));
 	void CloseGame() {};

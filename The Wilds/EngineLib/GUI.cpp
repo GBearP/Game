@@ -3,18 +3,19 @@
 #include"GUI.h"
 #include<iostream>
 
-CD3DUIManager::CD3DUIManager(/*IDirect3DDevice9* fp_device,*/ int w, int h) {
-	fontsList = NULL;
-	controls = NULL;
-	m_vertexBuffer = NULL;
-
-	fontsCount = controlsCount = m_vertexBuffersCount = 0;
-	m_width = w;
-	m_height = h;
-	m_useBackDrop = false;
-	m_mainPicture = NULL;
-}
-
+//self beta
+//CD3DUIManager::CD3DUIManager(/*IDirect3DDevice9* fp_device,*/ int w, int h) {
+//	fontsList = NULL;
+//	controls = NULL;
+//	m_vertexBuffer = NULL;
+//
+//	fontsCount = controlsCount = m_vertexBuffersCount = 0;
+//	m_width = w;
+//	m_height = h;
+//	m_useBackDrop = false;
+//	m_mainPicture = NULL;
+//}
+/*
 bool CD3DUIManager::CreateFonts(IDirect3DDevice9* device, LPCWSTR fontName, int size, int* fontID) {
 	if (!device) return false;
 	if (!fontsList){
@@ -145,4 +146,62 @@ void CD3DUIManager::Shutdown() {
 	//m_mainBackDrop.m_backDrop = nullptr;
 	m_mainPicture = nullptr;
 	m_backDropBuffer = nullptr;
+}
+*/
+
+//book beta
+bool CD3DUIManager::AddControl() {
+	if (!p_controls){
+		p_controls = new GUIControl[1];
+		if (!p_controls) return NULL;
+		memset(&p_controls[0], 0, sizeof(GUIControl));
+	}
+	else{
+		GUIControl* temp;
+		controlsCount += 1;
+		temp = new	GUIControl[controlsCount];
+		if (!temp)return NULL;
+		memset(temp, 0, sizeof(GUIControl)*controlsCount);
+		memcpy(temp, p_controls, sizeof(GUIControl)*(controlsCount - 1));
+	}
+	return 1;
+}
+
+bool CD3DUIManager::AddBackDrop(int texID, int sID) {
+
+
+	if (texID < 0 || sID < 0) return false;
+
+	//m_mainBackDrop.m_type = BACKDROP;
+	if (m_backDropID<0)
+	{
+		if (!AddControl())return false;
+		p_controls[controlsCount].m_type = BACKDROP;
+		p_controls[controlsCount].m_upTex=texID;
+		p_controls[controlsCount].m_listID=sID;
+
+
+
+	}
+	float w = 800;// (float)m_width;
+	float h = 600;// (float)m_height;
+	GUIVertex obj[] = {
+		{0,0,0.0f,1,D3DCOLOR_XRGB(255,255,255),0.1f,0.05f},
+		{0,h,0.0f,1,D3DCOLOR_XRGB(255,255,255),0.1f,1.0f},
+		{w,h,0.0f,1,D3DCOLOR_XRGB(255,255,255),0.9f,1.0f},
+		{w,h,0.0f,1,D3DCOLOR_XRGB(255,255,255),0.9f,1.0f},
+		{w,0,0.0f,1,D3DCOLOR_XRGB(255,255,255),0.9f,0.05f},
+		{0,0,0.0f,1,D3DCOLOR_XRGB(255,255,255),0.1f,0.05f}
+	};
+	if (FAILED(device->CreateVertexBuffer(sizeof(obj), 0, D3DFVF_GUI, D3DPOOL_DEFAULT, &m_backDropBuffer, NULL))) {
+		return false;
+	}
+	void* ptr;
+	if (FAILED(m_backDropBuffer->Lock(0, sizeof(obj), (void**)&ptr, 0))) {
+		return false;
+	}
+	memcpy(ptr, obj, sizeof(obj));
+	m_backDropBuffer->Unlock();
+	m_useBackDrop = true;
+	return true;
 }

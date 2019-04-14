@@ -1,7 +1,10 @@
 #include <Windows.h>
 #include"GameManager.h"
 
+bool LMBDown = false;
 
+bool LMBDown = false;
+int mouseX = 0, mouseY = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 
@@ -55,12 +58,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_KEYUP:
+		if (wParam==VK_ESCAPE) PostQuitMessage(0);
+		break;
 	case WM_LBUTTONDOWN:
 		//°´ÏÂ×´Ì¬Îªtrue;
+		LMBDown = true;
+	case WM_LBUTTONUP:
+		LMBDown = false;
 		break;
 	case WM_MOUSEMOVE:
+		mouseX = HIWORD(lParam);
+		mouseY = LOWORD(lParam);
 		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
+
+
 
