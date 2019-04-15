@@ -3,7 +3,9 @@
 #include"GUI.h"
 #include<iostream>
 
-CD3DUIManager::CD3DUIManager(/*IDirect3DDevice9* fp_device,*/ int w, int h) {
+//self version
+/* 
+CD3DUIManager::CD3DUIManager(/*IDirect3DDevice9* fp_device, int w, int h) {
 	fontsList = NULL;
 	controls = NULL;
 	m_vertexBuffer = NULL;
@@ -145,4 +147,100 @@ void CD3DUIManager::Shutdown() {
 	//m_mainBackDrop.m_backDrop = nullptr;
 	m_mainPicture = nullptr;
 	m_backDropBuffer = nullptr;
+}
+*/
+
+//book version
+GUISystem::GUISystem() {
+	 p_controls=NULL;    //button控件列表的指针
+	 controlsCount= 0;
+	 m_backDropID=-1;
+}
+
+bool GUISystem::AddControl() {
+	if (!p_controls) {
+		p_controls = new GUIControl[1];
+		if (!p_controls) return NULL;
+		memset(&p_controls[0], 0, sizeof(GUIControl));
+	}
+	else {
+		GUIControl* temp;
+		temp = new	GUIControl[controlsCount+1];
+		if (!temp)return NULL;
+		memset(temp, 0, sizeof(GUIControl)*(controlsCount+1));
+		memcpy(temp, p_controls, sizeof(GUIControl)*(controlsCount));
+		delete[] p_controls;
+		p_controls = temp;
+		temp = nullptr;
+	}
+	return 1;
+}
+
+bool GUISystem::AddBackDrop(int texID, int sID) {
+
+
+	if (texID < 0 || sID < 0) return false;
+
+	//m_mainBackDrop.m_type = BACKDROP;
+	if (m_backDropID < 0)
+	{
+		if (!AddControl())return false;
+		p_controls[controlsCount].m_type = BACKDROP;
+		p_controls[controlsCount].m_upTex = texID;
+		p_controls[controlsCount].m_listID = sID;
+		m_backDropID = controlsCount;
+		++controlsCount;
+	}else{
+		p_controls[controlsCount].m_upTex = texID;
+		p_controls[controlsCount].m_listID = sID;
+	}
+	return true;
+}
+
+//每个文本都是一个控件
+bool GUISystem::AddStaticText(int id, WCHAR* text, float x, float y, unsigned long color, int fontID) {
+	if (!text || fontID < 0)return false;
+	if (!AddControl())return false;
+
+	p_controls[controlsCount].m_type = STATICTEXT;
+	p_controls[controlsCount].m_id = id;
+	p_controls[controlsCount].m_color = color;
+	p_controls[controlsCount].m_xPos = x;
+	p_controls[controlsCount].m_yPos = y;
+	p_controls[controlsCount].m_listID = fontID;
+
+	size_t len = wcslen(text);
+	p_controls[controlsCount].m_text = new WCHAR[len + 1];
+	if (!p_controls[controlsCount].m_text) return false;
+	memcpy(p_controls[controlsCount].m_text,text, len);
+	p_controls[controlsCount].m_text[len] = L'0';
+	controlsCount++;
+	return true;
+}
+
+bool GUISystem::AddButton(int id, float x, float y, int width, int height, int upID, int overID, int downID, unsigned int staticID) {
+	if (!AddControl()) return false;
+	p_controls[controlsCount].m_type = BUTTON;
+	p_controls[controlsCount].m_id = id;
+	p_controls[controlsCount].m_xPos = x;
+	p_controls[controlsCount].m_yPos = y;
+	p_controls[controlsCount].m_width = width;
+	p_controls[controlsCount].m_height = height;
+	p_controls[controlsCount].m_upTex = upID;
+	p_controls[controlsCount].m_overTex = overID;
+	p_controls[controlsCount].m_listID = staticID;
+	++controlsCount;
+	return true;
+}
+
+void GUISystem::Shutdown() {
+	for (int i = 0; i < controlsCount; i++){
+		if (p_controls[i].m_text) {
+			delete[] p_controls[i].m_text;
+			p_controls[i].m_text = nullptr;
+		}
+	}
+	controlsCount = 0;
+	if (p_controls) delete[] p_controls;
+	p_controls = nullptr;
 }

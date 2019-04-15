@@ -15,7 +15,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	//初始化游戏后开始消息循环
 	if (gameManager.InitEngine(WIN)&&gameManager.InitGame())
 	{
-		gameManager.CreateUI(ENTER);
 		MSG msg;
 		ZeroMemory(&msg, sizeof(msg));
 

@@ -9,6 +9,8 @@
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 
+
+#define D3DFVF_GUI (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 //用以存储图元信息
 struct StaticVertexBuffer {
 	StaticVertexBuffer() :pt_VertexBuffer(0), pt_IndexBuffer(0), numVertexs(0), numIndex(0), fvf(0), primType(NULL_TYPE) {}
@@ -38,10 +40,11 @@ class D3DRender :public RenderInterface
 {
 private:
 	StaticVertexBuffer* m_StaticBufferList;
-	meshTexture* m_texture;
+	meshTexture* m_textureList;
 	D3DCOLOR m_color;
 	D3DMATERIAL9* m_materialList;
 	D3DLIGHT9* lightList;
+	LPD3DXFONT* fontList;
 
 	LPDIRECT3D9 m_Direct3D;
 	LPDIRECT3DDEVICE9 m_Direct3DDevice;
@@ -49,6 +52,7 @@ private:
 	int m_StaticBufferCount;
 	int m_ActiveBufferCount;
 	unsigned int m_TexturesCount;
+	
 
 public:
 	D3DRender();
@@ -65,7 +69,7 @@ public:
 	void StartRender(bool bColor, bool bDepth, bool bstencil);
 	void EndRender();
 	void ClearBuffer(bool bColor, bool bDepth, bool bstencil);
-	void CreateStaticBuffer(Vertextype vTpye, PrimType primType, int totalVertex, int totalIndices, int stride, void** data, unsigned int* indices, int* staticID);
+	bool CreateStaticBuffer(Vertextype vTpye, PrimType primType, int totalVertex, int totalIndices, int stride, void** data, unsigned int* indices, int* staticID);
 	void ShutDown();
 	void Render(int staticID);
 	void SetMaterial(dxMaterial* mat);
@@ -81,6 +85,14 @@ public:
 	void DisableSprites();
 	virtual int GetScreenWidth();
 	virtual	int GetScreenHeight();
+	virtual bool CreateGUI(int& id);
+	virtual bool AddGUIBackTexure(int GUIID, WCHAR* fileName);
+	virtual bool AddGUIStaticText(int GUIID, int id, WCHAR* text, int x, int y, unsigned long color, int fontID);
+	virtual bool AddGUIButton(int GUIID, int id, int x, int y, WCHAR* up, WCHAR* over, WCHAR* down);
+	virtual void ProcessGUI(int GUIID, bool LMBDwon, int mouseX, int mouseY, void(*funcPtr)(int id, int state));
+	virtual bool CreateText(WCHAR* font, int weigth, int heigth, bool italic, int size, int &id) ;
+	virtual void DisplayText(int id, long x, long y, int r, int g, int b, WCHAR* text, ...) ;
+	virtual void DisplayText(int id, long x, long y, unsigned long color, WCHAR* text, ...) ;
 };
 
 

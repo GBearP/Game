@@ -1,5 +1,5 @@
 #include"D3DRender.h"
-
+#include<stdio.h>
 inline unsigned long FtoDW(float v) {
 	return *((unsigned long*)&v);
 }
@@ -15,9 +15,10 @@ bool CreateD3DRender(RenderInterface** g_Render) {
 	}
 	return true;
 }
-
+ 
 unsigned long CreateD3DFVF(Vertextype flags) {
 	unsigned long fvf = 0;
+	if (flags == D3DFVF_GUI) fvf = D3DFVF_GUI;
 	return fvf;
 }
 
@@ -31,8 +32,12 @@ D3DRender::D3DRender() {
 	m_StaticBufferList = NULL;
 	m_StaticBufferCount = 0;
 	m_ActiveBufferCount = 0;
-	m_texture = nullptr;
+	m_textureList = nullptr;
 	unsigned int m_numTextures = 0;
+	fontList = NULL;
+	fontCount = 0;
+	GUIList = NULL;
+	GUICount = 0;
 }
 
 D3DRender::~D3DRender() {
@@ -210,7 +215,7 @@ void  D3DRender::ClearBuffer(bool bColor, bool bDepth, bool bstencil) {
 	}
 }
 
-void D3DRender::CreateStaticBuffer(Vertextype vTpye, PrimType primType, int totalVertex, int totalIndices, int stride, void** data, unsigned int* indices, int* staticID) {
+bool D3DRender::CreateStaticBuffer(Vertextype vTpye, PrimType primType, int totalVertex, int totalIndices, int stride, void** data, unsigned int* indices, int* staticID) {
 	void* ptr;
 	int index = m_StaticBufferCount;
 	if (!m_StaticBufferList)
@@ -219,7 +224,7 @@ void D3DRender::CreateStaticBuffer(Vertextype vTpye, PrimType primType, int tota
 	}
 	if (!m_StaticBufferList)
 	{
-		return;
+		return false;
 	}
 	else
 	{
@@ -240,29 +245,29 @@ void D3DRender::CreateStaticBuffer(Vertextype vTpye, PrimType primType, int tota
 	if (totalIndices > 0)
 	{
 		if (FAILED(m_Direct3DDevice->CreateIndexBuffer(sizeof(unsigned int)*totalIndices, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_StaticBufferList[index].pt_IndexBuffer, NULL))) {
-			return;
+			return false;
 		}
 		if (FAILED(m_StaticBufferList[index].pt_IndexBuffer->Lock(0, 0, (void**)&ptr, 0))) {
-			return;
+			return false;
 		}
 		memcpy(ptr, indices, sizeof(unsigned int)*totalIndices);
 		m_StaticBufferList[index].pt_IndexBuffer->Unlock();
 	}
 	else {
 		m_StaticBufferList[index].pt_IndexBuffer = NULL;
-		return;
+		return false;
 	}
 
 	//创建顶点缓存
 	if (FAILED(m_Direct3DDevice->CreateVertexBuffer(totalVertex*stride, D3DUSAGE_WRITEONLY, m_StaticBufferList[index].fvf, D3DPOOL_DEFAULT, &m_StaticBufferList[index].pt_VertexBuffer, NULL))) {
-		return;
+		return false;
 	}
 	if (FAILED(m_StaticBufferList[index].pt_VertexBuffer->Lock(0, 0, (void**)ptr, 0))) {
-		return;
+		return false;
 	}
 	memcpy(ptr, data, totalVertex*stride);
 	if (FAILED(m_StaticBufferList[index].pt_VertexBuffer->Unlock())) {
-		return;
+		return false;
 	}
 	*staticID = m_StaticBufferCount;
 	m_StaticBufferCount++;
@@ -282,23 +287,43 @@ void D3DRender::ShutDown() {
 	}
 	for (unsigned int i = 0; i<m_TexturesCount; i++)
 	{
-		if (m_texture[i].fileName) {
-			delete[]m_texture;
-			m_texture[i].fileName = NULL;
+		if (m_textureList[i].fileName) {
+			delete[]m_textureList;
+			m_textureList[i].fileName = NULL;
 		}
-		if (m_texture->image)
+		if (m_textureList->image)
 		{
-			m_texture[i].image->Release();
-			m_texture[i].image = NULL;
+			m_textureList[i].image->Release();
+			m_textureList[i].image = NULL;
 		}
 	}
 	m_TexturesCount = 0;
 	m_StaticBufferCount = 0;
-	if (m_texture)
+	for (int i = 0; i < fontCount; i++)
 	{
-		delete[] m_texture;
-		m_texture = NULL;
+		if (fontList[i]) {
+			fontList[i]->Release();
+			fontList[i] = NULL;
+		}
 	}
+	fontCount = 0;
+	if (fontList)
+	{
+		delete[] fontList;
+	}
+	fontList = NULL;
+	if (m_textureList)
+	{
+		delete[] m_textureList;
+		m_textureList = NULL;
+	}
+
+	for (int i = 0; i < GUICount; i++){
+		GUIList[i].Shutdown();
+	}
+	if (GUIList) delete[] GUIList;
+	GUIList = nullptr;
+	GUICount = 0;
 	if (m_StaticBufferList) {
 		delete[] m_StaticBufferList;
 		m_StaticBufferList = nullptr;
@@ -586,36 +611,34 @@ int D3DRender::AddTexture2D(wchar_t* file, int* texID) {
 		return 0;
 	}
 	unsigned int index = m_TexturesCount;
-	if (!m_texture){
-		m_texture = new meshTexture[1];
-		if (!m_texture){
+	if (!m_textureList){
+		m_textureList = new meshTexture[1];
+		if (!m_textureList){
 			return 0;
 		}
-	}
-	else {
+	}else {
 		meshTexture* temp;
 		temp = new meshTexture[m_TexturesCount + 1];
-		memcpy(temp, m_texture, sizeof(meshTexture)*m_TexturesCount);
+		memcpy(temp, m_textureList, sizeof(meshTexture)*m_TexturesCount);
 
-		delete[] m_texture;
-		m_texture = temp;
+		delete[] m_textureList;
+		m_textureList = temp;
 	}
-	m_texture[index].fileName = new wchar_t[len];
-	memcpy(m_texture[index].fileName, file, len);
+	m_textureList[index].fileName = new wchar_t[len];
+	memcpy(m_textureList[index].fileName, file, len);
 	D3DCOLOR colorkey = 0xff000000;
 	D3DXIMAGE_INFO info;
 	if (D3DXCreateTextureFromFileEx(m_Direct3DDevice,
 		file, 0, 0, 0, 0,
 		D3DFMT_UNKNOWN, D3DPOOL_MANAGED,
 		D3DX_DEFAULT, D3DX_DEFAULT, colorkey,
-		&info, NULL, &m_texture[index].image) != D3D_OK) {
+		&info, NULL, &m_textureList[index].image) != D3D_OK) {
 		return true;
 	}
-	m_texture[index].width = info.Width;
-	m_texture[index].height = info.Height;
+	m_textureList[index].width = info.Width;
+	m_textureList[index].height = info.Height;
 	*texID = m_TexturesCount;
 	m_TexturesCount++;
-
 	return 1;
 }
 
@@ -626,26 +649,20 @@ void D3DRender::SetTextureFilter(int index, int filter, int val) {
 	D3DSAMPLERSTATETYPE fil = D3DSAMP_MINFILTER;
 	int v = D3DTEXF_POINT;
 
-	if (filter==MIN_FILTER)
-	{
+	if (filter==MIN_FILTER){
 		fil = D3DSAMP_MINFILTER;
 	}
-	else if (filter == MAG_FILTER)
-	{
+	else if (filter == MAG_FILTER){
 		fil = D3DSAMP_MAGFILTER;
-	}else if (filter == MIP_FILTER)
-	{
+	}else if (filter == MIP_FILTER){
 		fil = D3DSAMP_MIPFILTER;
 	}
 	
-	if (val == POINT_TYPE)
-	{
+	if (val == POINT_TYPE){
 		v = D3DTEXF_POINT;
-	}else if (val== LINEAR_TYPE)
-	{
+	}else if (val== LINEAR_TYPE){
 		v = D3DTEXF_LINEAR;
-	}else if (val == ANISOTROPIC_TYPE)
-	{
+	}else if (val == ANISOTROPIC_TYPE){
 		v = D3DTEXF_ANISOTROPIC;
 	}
 
@@ -677,30 +694,26 @@ void D3DRender::ApplyTexture(int index, int texID) {
 		m_Direct3DDevice->SetTexture(0, NULL);
 	}
 	else {
-		m_Direct3DDevice->SetTexture(index, m_texture[index].image);
+		m_Direct3DDevice->SetTexture(index, m_textureList[index].image);
 	}
 }
 
 void D3DRender::SaveScreenShot(wchar_t* file) {
-	if (!file)
-	{
-		return;
-	}
+	if (!file)return;
 	IDirect3DSurface9* surface = NULL;
 	D3DDISPLAYMODE mode;
 	m_Direct3DDevice->GetDisplayMode(0, &mode);
 	m_Direct3DDevice->CreateOffscreenPlainSurface(mode.Width, mode.Height, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &surface, NULL);
 	m_Direct3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surface);
 	D3DXSaveSurfaceToFile(file, D3DXIFF_JPG, surface, NULL, NULL);
-	if (surface!=NULL)
-	{
+	if (surface!=NULL){
 		surface->Release();
 		surface = nullptr;
 	}
 }
+
 void D3DRender::EnablePointSprites(float size, float min, float a, float b, float c) {
-	if (!m_Direct3DDevice)
-	{
+	if (!m_Direct3DDevice){
 		return;
 	}
 	m_Direct3DDevice->SetRenderState(D3DRS_POINTSCALEENABLE, TRUE);
@@ -710,8 +723,8 @@ void D3DRender::EnablePointSprites(float size, float min, float a, float b, floa
 	m_Direct3DDevice->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(a));
 	m_Direct3DDevice->SetRenderState(D3DRS_POINTSCALE_B, FtoDW(b));
 	m_Direct3DDevice->SetRenderState(D3DRS_POINTSCALE_C, FtoDW(c));
-
 }
+
 void D3DRender::DisableSprites() {
 	m_Direct3DDevice->SetRenderState(D3DRS_POINTSCALEENABLE, FALSE);
 	m_Direct3DDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, FALSE);
@@ -723,4 +736,168 @@ int D3DRender::GetScreenWidth() {
 }
 int D3DRender::GetScreenHeight() {
 	return m_screenHeight;
+}
+
+ bool D3DRender::CreateGUI(int& id) {
+	 if (!GUIList) {
+		 GUIList = new GUISystem[1];
+		 if (!GUIList) return false;
+	 }
+	 else{
+		 GUISystem* temp;
+		 temp = new GUISystem[GUICount + 1];
+		 memcpy(temp, GUIList, sizeof(GUISystem)*GUICount);
+		 delete[] GUIList;
+		 GUIList = temp;
+		 temp = nullptr;
+	 }
+	 id = GUICount;
+	 GUICount++;
+	 return true;
+}
+
+ bool D3DRender::AddGUIBackTexure(int GUIID, WCHAR* fileName){
+	 if (GUIID>=GUICount) return false;
+	 int texID = -1;
+	 int staticTexIDs = -1;
+	 if (!AddTexture2D(fileName,&texID)) return false;
+	 unsigned long col = D3DCOLOR_XRGB(255, 255, 255);
+	 GUIVertex obj[] = {
+		 {(float)m_screenWitdth,0,0,1,col,1,0},
+		 {(float)m_screenWitdth,(float)m_screenHeight,0,1,col,1,1},
+		{0,0,0,1,col,0,0},
+		{0,(float)m_screenHeight,0,1,col,0,1},
+	 };
+	 if (!CreateStaticBuffer(D3DFVF_GUI, TRANGLE_STRIP, 4, 0, sizeof(GUIVertex), (void**)&obj, NULL, &staticTexIDs)) return false;
+	 return GUIList[GUIID].AddBackDrop(texID, staticTexIDs);
+ }
+ bool D3DRender::AddGUIStaticText(int GUIID, int id, WCHAR* text, int x, int y, unsigned long color, int fontID){
+	 if (GUIID>=GUICount) return false;
+	 return GUIList[GUIID].AddStaticText(id, text, x, y, color, fontID);
+ }
+ bool D3DRender::AddGUIButton(int GUIID, int id, int x, int y, WCHAR* up, WCHAR* over, WCHAR* down){
+	 if (GUIID>=GUICount)return false;
+	 int upID = -1,overID=-1,downID=-1,staticID=-1;
+	 if (!AddTexture2D(up,&upID)) return false;
+	 if (!AddTexture2D(over,&overID)) return false;
+	 if (!AddTexture2D(down,&downID)) return false;
+	 unsigned long col = D3DCOLOR_XRGB(255, 255, 255);
+	 int w = m_textureList[upID].width;
+	 int h = m_textureList[upID].height;
+	 GUIVertex obj[] = {
+		 {(float)(w+x),(float)(0+y),0,1,col,1,0},
+		 {(float)(w + x),(float)(h + y),0,1,col,1,1},
+		{(float)(0 + x),(float)(0 + y),0,1,col,0,0},
+		{(float)(0 + x),(float)(h + y),0,1,col,0,1},
+	 };
+	 if (!CreateStaticBuffer(D3DFVF_GUI, TRANGLE_STRIP, 4, 0, sizeof(GUIVertex), (void**)&obj, NULL, &staticID)) return false;
+	 return GUIList[GUIID].AddButton(id,x,y,w,h,upID,overID,downID,staticID);
+ }
+ void D3DRender::ProcessGUI(int GUIID, bool LMBDwon, int mouseX, int mouseY, void(*funcPtr)(int id, int state)){
+	 if (GUIID >= GUICount || !m_Direct3DDevice) return;
+	 GUISystem* GUI = &GUIList[GUIID];
+	 if (!GUIID) return;
+	 GUIControl* backdrop = GUI->GetBackdrop();
+	 //绘制自己
+	 if (backdrop)
+	 {
+		 ApplyTexture(0, backdrop->m_upTex);
+		 Render(backdrop->m_listID);
+		 ApplyTexture(0, -1);
+	 }
+	 int status = BUTTON_UP;
+
+	 //loop through a;; controls and display them
+	 for (int i = 0; i < GUI->GetControlsCount(); i++)
+	 {
+		 GUIControl* pCnt = GUI->GetGUIControl(i);
+		 if (!pCnt)continue;
+		// RECT position = {0,0,(long)gui.}
+		 //if (!pCnt) return;
+		 switch (pCnt->m_type)
+		 {
+		 case STATICTEXT:
+			 DisplayText(pCnt->m_listID, pCnt->m_xPos, pCnt->m_yPos, pCnt->m_color, pCnt->m_text);
+			 break;
+		 case BUTTON:
+			 status = BUTTON_UP;
+			 m_Direct3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+			 m_Direct3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			 m_Direct3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+			 if (( mouseX>pCnt->m_xPos  &&  mouseX<pCnt->m_xPos+pCnt->m_width )    &&
+				 (mouseY>pCnt->m_yPos) && (mouseY < pCnt->m_yPos + pCnt->m_height))
+			 {
+				 if (LMBDwon) {
+					 status = BUTTON_DOWN;
+				 }else {
+					 status = BUTTON_OVER;
+				 }
+			 }
+			 if (status==BUTTON_UP){
+				ApplyTexture(0, pCnt->m_upTex);
+			 }
+			 if (status==BUTTON_OVER){
+				 ApplyTexture(0, pCnt->m_overTex);
+			 }
+			 if (status==BUTTON_DOWN){
+				 ApplyTexture(0, pCnt->m_downTex);
+			 }
+			 Render(pCnt->m_listID);
+			 m_Direct3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+			 break;
+		 }
+		 if (funcPtr) {
+			 funcPtr(pCnt->m_id, status);
+		 }
+	 }
+ }
+
+bool  D3DRender::CreateText(WCHAR* font, int weight, int heigth, bool italic, int size, int &id){
+	if (!fontList){
+		fontList = new LPD3DXFONT[1];
+		if (!fontList) return false;
+	}
+	else{
+		LPD3DXFONT* temp;
+		temp = new LPD3DXFONT[fontCount + 1];
+		memcpy(temp, fontList, sizeof(LPD3DXFONT)*fontCount);
+		delete[] fontList;
+		fontList = temp;
+		temp = nullptr;
+	}
+	if (FAILED(D3DXCreateFont(m_Direct3DDevice,size,0, weight,1,italic,0,0,0,0,font,&fontList[fontCount]))){
+		MessageBox(0, 0, L"创建字体失败", 0);
+		return false;
+	}
+	id = fontCount;
+	fontCount++;
+	return true;
+}
+void  D3DRender::DisplayText(int id, long x, long y, int r, int g, int b, WCHAR* text, ...){
+	RECT position = { x,y,m_screenWitdth,m_screenHeight };
+	WCHAR message[1024];
+	va_list argList;
+
+	if (id>=fontCount)
+	{
+		return;
+	}
+	va_start(argList, text);
+	wvsprintf(message, text, argList);
+	va_end(argList);
+	fontList[id]->DrawTextW(NULL, message, -1, &position, DT_SINGLELINE, D3DCOLOR_ARGB(255, r, g, b));
+}
+void  D3DRender::DisplayText(int id, long x, long y, unsigned long color, WCHAR* text, ...){
+	RECT position = { x,y,m_screenWitdth,m_screenHeight };
+	WCHAR message[1024];
+	va_list argList;
+
+	if (id >= fontCount)
+	{
+		return;
+	}
+	va_start(argList, text);
+	wvsprintf(message, text, argList);
+	va_end(argList);
+	fontList[id]->DrawTextW(NULL, message, -1, &position, DT_SINGLELINE,color);
 }

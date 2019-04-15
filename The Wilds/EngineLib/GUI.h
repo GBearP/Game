@@ -10,8 +10,11 @@
 #define BUTTON_OVER 2
 #define BUTTON_DOWN 3
 
-#define D3DFVF_GUI (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
+
+
+//self beta
+/*
 struct GUIVertex{
 	float x, y, z, rhw;
 	unsigned long color;
@@ -125,6 +128,66 @@ public:
 	LPDIRECT3DVERTEXBUFFER9 GetBackDropBuffer() {
 		return m_backDropBuffer;
 	}
+};
+*/
+
+/*****************************************book version***********************************************/
+//book beta
+struct GUIVertex {
+	float x, y, z, rhw;
+	unsigned long color;
+	float tu, tv;
+};
+
+struct GUIControl {
+	int m_type;//控件类型,button.滚动轴等
+	int m_id;//控件ID
+	unsigned long m_color;//颜色
+	int m_listID;//控件在列表中的ID
+	float m_xPos, m_yPos;//控件在窗口的位置
+	float m_width, m_height;//控件宽度和高度
+	WCHAR* m_text;//文本指针	
+	int m_upTex, m_downTex, m_overTex;
+};
+
+
+class GUISystem
+{
+private:
+	GUIControl* p_controls;    //button控件列表的指针
+	int controlsCount;
+	int m_backDropID;
+
+public:
+	GUISystem();
+	~GUISystem() { Shutdown(); };
+
+	
+	//加载图像文件,成为背景
+	bool AddBackDrop(int texID, int sID);
+	//创建没有事件响应的静态文本,显示工作组等等
+	bool AddStaticText(int id,WCHAR* text, float x, float y, unsigned long color, int fontID);
+	//创建button
+	bool AddButton(int id, float x, float y, int width, int height, int upID, int overID, int downID, unsigned int staticID);
+	void Shutdown();
+
+	//创建控件,获得控件,获得控件的计数
+	bool AddControl();
+	GUIControl* GetGUIControl(int id) {
+		if (id < 0 || id >= controlsCount) return NULL;
+		return &p_controls[id];
+	}
+	GUIControl* GetBackdrop() {
+		if (m_backDropID>=0&& controlsCount)
+		{
+			return &p_controls[m_backDropID];
+		}
+		return NULL;
+	}
+	int GetControlsCount() {
+		return controlsCount;
+	}
+
 };
 #endif // !GUI_H
 
