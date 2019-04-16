@@ -133,6 +133,7 @@ public:
 
 /*****************************************book version***********************************************/
 //book beta
+//GUI控件中每个图片所需的顶点
 struct GUIVertex {
 	float x, y, z, rhw;
 	unsigned long color;
@@ -162,24 +163,21 @@ public:
 	GUISystem();
 	~GUISystem() { Shutdown(); };
 
-	
 	//加载图像文件,成为背景
 	bool AddBackDrop(int texID, int sID);
 	//创建没有事件响应的静态文本,显示工作组等等
 	bool AddStaticText(int id, LPCWSTR text, float x, float y, unsigned long color, int fontID);
 	//创建button
 	bool AddButton(int id, float x, float y, int width, int height, int upID, int overID, int downID, unsigned int staticID);
-	void Shutdown();
-
 	//创建控件,获得控件,获得控件的计数
 	bool AddControl();
+	void Shutdown();
 	GUIControl* GetGUIControl(int id) {
 		if (id < 0 || id >= controlsCount) return NULL;
 		return &p_controls[id];
 	}
 	GUIControl* GetBackdrop() {
-		if (m_backDropID>=0&& controlsCount)
-		{
+		if (m_backDropID>=0&& controlsCount){
 			return &p_controls[m_backDropID];
 		}
 		return NULL;

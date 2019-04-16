@@ -41,9 +41,7 @@ bool D3DRender::Initialize(int w, int h, WinHWND wh, int Screen) {
 
 	ShutDown();//关闭上次的游戏引擎;
 
-	if (!m_mainHandle) {
-		return false;
-	}
+	if (!m_mainHandle)return false;
 
 	//获得创建D3D对象所需设备信息等
 	D3DDISPLAYMODE mode;
@@ -53,10 +51,7 @@ bool D3DRender::Initialize(int w, int h, WinHWND wh, int Screen) {
 
 	//创建D3D对象
 	m_Direct3D = Direct3DCreate9(D3D_SDK_VERSION);
-	if (!m_Direct3D) {
-		return false;
-
-	}
+	if (!m_Direct3D)return false;
 
 	//获得第一张显卡的信息
 	if (FAILED(m_Direct3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &mode))) {

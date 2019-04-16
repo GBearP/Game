@@ -12,9 +12,9 @@ class RenderInterface
 {
 public:
 	RenderInterface() :m_screenWitdth(0), m_screenHeight(0), m_full(0), m_near(0), m_far(0) {}
+	virtual ~RenderInterface() {}
 	virtual void* GetDevice() = 0;
 	GUISystem* GetGUIList() { return GUIList; }
-	virtual ~RenderInterface() {}
 	virtual bool Initialize(int w, int h, WinHWND wh, int fullScreen) = 0;
 	virtual void OneTimeInit() = 0;
 	virtual void CalculateProjMatrix(float fov, float n, float f) = 0;

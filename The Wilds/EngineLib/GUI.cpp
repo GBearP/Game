@@ -177,13 +177,9 @@ bool GUISystem::AddControl() {
 }
 
 bool GUISystem::AddBackDrop(int texID, int sID) {
-
-
 	if (texID < 0 || sID < 0) return false;
-
 	//m_mainBackDrop.m_type = BACKDROP;
-	if (m_backDropID < 0)
-	{
+	if (m_backDropID < 0){
 		if (!AddControl())return false;
 		p_controls[controlsCount].m_type = BACKDROP;
 		p_controls[controlsCount].m_upTex = texID;
@@ -199,7 +195,7 @@ bool GUISystem::AddBackDrop(int texID, int sID) {
 
 //每个文本都是一个控件
 bool GUISystem::AddStaticText(int id, LPCWSTR text, float x, float y, unsigned long color, int fontID) {
-	if (!text || fontID < 0)return false;
+	if (!text || fontID < 0) return false;
 	if (!AddControl())return false;
 
 	p_controls[controlsCount].m_type = STATICTEXT;
@@ -208,11 +204,10 @@ bool GUISystem::AddStaticText(int id, LPCWSTR text, float x, float y, unsigned l
 	p_controls[controlsCount].m_xPos = x;
 	p_controls[controlsCount].m_yPos = y;
 	p_controls[controlsCount].m_listID = fontID;
-
 	size_t len = wcslen(text);
 	p_controls[controlsCount].m_text = new WCHAR[len + 1];
 	if (!p_controls[controlsCount].m_text) return false;
-	memcpy((WCHAR*)p_controls[controlsCount].m_text,text, len);
+	memcpy(p_controls[controlsCount].m_text,text, len);
 	p_controls[controlsCount].m_text[len] = L'0';
 	controlsCount++;
 	return true;
