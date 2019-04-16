@@ -13,6 +13,7 @@ class RenderInterface
 public:
 	RenderInterface() :m_screenWitdth(0), m_screenHeight(0), m_full(0), m_near(0), m_far(0) {}
 	virtual void* GetDevice() = 0;
+	GUISystem* GetGUIList() { return GUIList; }
 	virtual ~RenderInterface() {}
 	virtual bool Initialize(int w, int h, WinHWND wh, int fullScreen) = 0;
 	virtual void OneTimeInit() = 0;
@@ -29,7 +30,7 @@ public:
 	virtual void SetLight(dxLight* light, int lightIndex) = 0;
 	virtual void DisableLight(int index) = 0;
 	virtual void SetTranspancy(RenderState state, TransState src, TransState dst) = 0;
-	virtual int AddTexture2D(wchar_t* file, int* texID) = 0;
+	virtual int AddTexture2D(LPCWSTR file, int* texID) = 0;
 	virtual void SetTextureFilter(int index, int filter, int val) = 0;
 	virtual void SetMultiTexture() = 0;
 	virtual void ApplyTexture(int index, int texID) = 0;
@@ -39,19 +40,19 @@ public:
 	virtual int GetScreenWidth()=0;
 	virtual	int GetScreenHeight() = 0;
 	virtual bool CreateGUI(int& id)=0;
-	virtual bool AddGUIBackTexure(int GUIID,WCHAR* fileName)=0;
-	virtual bool AddGUIStaticText(int GUIID, int id, WCHAR* text, int x, int y, unsigned long color, int fontID) = 0;
-	virtual bool AddGUIButton(int GUIID, int id, int x, int y, WCHAR* up, WCHAR* over, WCHAR* down) = 0;
+	virtual bool AddGUIBackTexure(int GUIID, LPCWSTR fileName)=0;
+	virtual bool AddGUIStaticText(int GUIID, int id, LPCWSTR text, int x, int y, unsigned long color, int fontID) = 0;
+	virtual bool AddGUIButton(int GUIID, int id, int x, int y, LPCWSTR up, LPCWSTR over, LPCWSTR down) = 0;
 	virtual void ProcessGUI(int GUIID, bool LMBDwon, int mouseX, int mouseY, void(*funcPtr)(int id, int state)) = 0;
-	virtual bool CreateText(WCHAR* font, int weigth, int heigth, bool italic, int size, int &id) = 0;
-	virtual void DisplayText(int id, long x, long y, int r, int g, int b, WCHAR* text, ...) = 0;
-	virtual void DisplayText(int id,long x,long y,unsigned long color,WCHAR* text,...)=0;
+	virtual bool CreateText(LPCWSTR font, int weigth, int heigth, bool italic, int size, int &id) = 0;
+	virtual void DisplayText(int id, long x, long y, int r, int g, int b, LPCWSTR text, ...) = 0;
+	virtual void DisplayText(int id,long x,long y,unsigned long color, LPCWSTR text,...)=0;
 
 protected:
 	int m_screenWitdth;
 	int m_screenHeight;
 	bool m_full;
-	WinHWND m_mainHandle;
+	HWND m_mainHandle;
 	float m_near;
 	float m_far;
 	GUISystem* GUIList;

@@ -1,7 +1,7 @@
 #include<d3d9.h>
 #include<d3dx9.h>
 #include"GUI.h"
-#include<iostream>
+
 
 //self version
 /* 
@@ -198,7 +198,7 @@ bool GUISystem::AddBackDrop(int texID, int sID) {
 }
 
 //每个文本都是一个控件
-bool GUISystem::AddStaticText(int id, WCHAR* text, float x, float y, unsigned long color, int fontID) {
+bool GUISystem::AddStaticText(int id, LPCWSTR text, float x, float y, unsigned long color, int fontID) {
 	if (!text || fontID < 0)return false;
 	if (!AddControl())return false;
 
@@ -212,7 +212,7 @@ bool GUISystem::AddStaticText(int id, WCHAR* text, float x, float y, unsigned lo
 	size_t len = wcslen(text);
 	p_controls[controlsCount].m_text = new WCHAR[len + 1];
 	if (!p_controls[controlsCount].m_text) return false;
-	memcpy(p_controls[controlsCount].m_text,text, len);
+	memcpy((WCHAR*)p_controls[controlsCount].m_text,text, len);
 	p_controls[controlsCount].m_text[len] = L'0';
 	controlsCount++;
 	return true;

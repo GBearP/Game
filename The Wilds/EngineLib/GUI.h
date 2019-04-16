@@ -166,7 +166,7 @@ public:
 	//加载图像文件,成为背景
 	bool AddBackDrop(int texID, int sID);
 	//创建没有事件响应的静态文本,显示工作组等等
-	bool AddStaticText(int id,WCHAR* text, float x, float y, unsigned long color, int fontID);
+	bool AddStaticText(int id, LPCWSTR text, float x, float y, unsigned long color, int fontID);
 	//创建button
 	bool AddButton(int id, float x, float y, int width, int height, int upID, int overID, int downID, unsigned int staticID);
 	void Shutdown();

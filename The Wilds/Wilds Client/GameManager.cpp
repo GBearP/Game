@@ -30,9 +30,7 @@ void GameManager::CreateWnd(HINSTANCE hInstance, int nCmdShow, WNDPROC WndProc) 
 }
 //³õÊ¼»¯ÒýÇæ//
 bool GameManager::InitEngine(FULLSCREEN show) {
-	if (!CreateD3DRender(&gameRender)) {
-		return false;
-	}
+	if (!CreateRender()) return false;
 	if (!gameRender->Initialize(WIN_WIDTH, WIN_HEIGHT, hWnd, show)) {
 		return false;
 	}
@@ -65,4 +63,14 @@ void InitMainMenu() {
 
 void GameManager::LoadScene() {
 
+}
+
+
+bool GameManager::CreateRender() {
+
+	if (!gameRender) {
+		gameRender = new D3DRender();
+		if (!gameRender)return false;
+	}
+	return true;
 }

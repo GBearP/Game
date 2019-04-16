@@ -9,6 +9,10 @@
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 
+enum FULLSCREEN
+{
+	WIN, FULL
+};
 
 #define D3DFVF_GUI (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 //用以存储图元信息
@@ -32,7 +36,6 @@ struct meshTexture
 	IDirect3DTexture9* image;
 };
 
-bool CreateD3DRender(RenderInterface** g_Render);
 
 
 //继承于RenderInterface的接口,实现DirectX渲染,如果用OpenGL,则新建OpenGLRender
@@ -51,7 +54,7 @@ private:
 	bool m_rengderingScene;
 	int m_StaticBufferCount;
 	int m_ActiveBufferCount;
-	unsigned int m_TexturesCount;
+	unsigned int m_TextureCount;
 	
 
 public:
@@ -76,7 +79,7 @@ public:
 	void SetLight(dxLight* light, int lightIndex);
 	void DisableLight(int index);
 	void SetTranspancy(RenderState state, TransState src, TransState dst);
-	int AddTexture2D(wchar_t* file, int* texID);
+	int AddTexture2D(LPCWSTR file, int* texID);
 	void SetTextureFilter(int index, int filter, int val);
 	void SetMultiTexture();
 	void ApplyTexture(int index, int texID);
@@ -86,13 +89,13 @@ public:
 	virtual int GetScreenWidth();
 	virtual	int GetScreenHeight();
 	virtual bool CreateGUI(int& id);
-	virtual bool AddGUIBackTexure(int GUIID, WCHAR* fileName);
-	virtual bool AddGUIStaticText(int GUIID, int id, WCHAR* text, int x, int y, unsigned long color, int fontID);
-	virtual bool AddGUIButton(int GUIID, int id, int x, int y, WCHAR* up, WCHAR* over, WCHAR* down);
+	virtual bool AddGUIBackTexure(int GUIID, LPCWSTR fileName);
+	virtual bool AddGUIStaticText(int GUIID, int id, LPCWSTR text, int x, int y, unsigned long color, int fontID);
+	virtual bool AddGUIButton(int GUIID, int id, int x, int y, LPCWSTR up, LPCWSTR over, LPCWSTR down);
 	virtual void ProcessGUI(int GUIID, bool LMBDwon, int mouseX, int mouseY, void(*funcPtr)(int id, int state));
-	virtual bool CreateText(WCHAR* font, int weigth, int heigth, bool italic, int size, int &id) ;
-	virtual void DisplayText(int id, long x, long y, int r, int g, int b, WCHAR* text, ...) ;
-	virtual void DisplayText(int id, long x, long y, unsigned long color, WCHAR* text, ...) ;
+	virtual bool CreateText(LPCWSTR font, int weigth, int heigth, bool italic, int size, int &id) ;
+	virtual void DisplayText(int id, long x, long y, int r, int g, int b, LPCWSTR text, ...) ;
+	virtual void DisplayText(int id, long x, long y, unsigned long color, LPCWSTR text, ...) ;
 };
 
 

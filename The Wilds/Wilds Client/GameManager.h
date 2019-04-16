@@ -7,20 +7,18 @@
 
 #define WIN_WIDTH 800		
 #define WIN_HEIGHT 600
-enum FULLSCREEN{
-	WIN, FULL
-};
 
-class GameManager{
+
+class GameManager {
 private:
 	//AudioManager audioManager;
 	RenderInterface* gameRender;
 	HWND hWnd = NULL;
 	IDirect3DDevice9* device;
-	GUISystem* GUI;
+	
 public:
-	GameManager()=default;
-	~GameManager()=default;
+	GameManager() = default;
+	~GameManager() = default;
 
 	//³õÊ¼»¯´°¿Ú
 	void CreateWnd(HINSTANCE hInstance, int nCmdShow, WNDPROC WndProc);
@@ -40,6 +38,13 @@ public:
 	HWND GetHwnd() {
 		return hWnd;
 	}
+	IDirect3DDevice9* GetDevice() {
+		return device;
+	}
+	RenderInterface* GetGameRender() {
+		return gameRender;
+	}
+	bool CreateRender();
 };
 
 

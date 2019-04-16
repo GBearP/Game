@@ -5,16 +5,7 @@ inline unsigned long FtoDW(float v) {
 }
 
 
-bool CreateD3DRender(RenderInterface** g_Render) {
 
-	if (!*g_Render) {
-		*g_Render = new D3DRender();
-	}
-	else {
-		return false;
-	}
-	return true;
-}
  
 unsigned long CreateD3DFVF(Vertextype flags) {
 	unsigned long fvf = 0;
@@ -33,11 +24,11 @@ D3DRender::D3DRender() {
 	m_StaticBufferCount = 0;
 	m_ActiveBufferCount = 0;
 	m_textureList = nullptr;
-	unsigned int m_numTextures = 0;
 	fontList = NULL;
 	fontCount = 0;
 	GUIList = NULL;
 	GUICount = 0;
+	m_TextureCount = 0;
 }
 
 D3DRender::~D3DRender() {
@@ -285,7 +276,7 @@ void D3DRender::ShutDown() {
 			m_StaticBufferList[i].pt_IndexBuffer = nullptr;
 		}
 	}
-	for (unsigned int i = 0; i<m_TexturesCount; i++)
+	for (unsigned int i = 0; i<m_TextureCount; i++)
 	{
 		if (m_textureList[i].fileName) {
 			delete[]m_textureList;
@@ -297,7 +288,7 @@ void D3DRender::ShutDown() {
 			m_textureList[i].image = NULL;
 		}
 	}
-	m_TexturesCount = 0;
+	m_TextureCount = 0;
 	m_StaticBufferCount = 0;
 	for (int i = 0; i < fontCount; i++)
 	{
@@ -602,7 +593,7 @@ void D3DRender::SetTranspancy(RenderState state, TransState src, TransState dst)
 	}
 }
 
-int D3DRender::AddTexture2D(wchar_t* file, int* texID) {
+int D3DRender::AddTexture2D(LPCWSTR file, int* texID) {
 	if (!file || !m_Direct3DDevice){
 		return 0;
 	}
@@ -610,7 +601,7 @@ int D3DRender::AddTexture2D(wchar_t* file, int* texID) {
 	if (!len){
 		return 0;
 	}
-	unsigned int index = m_TexturesCount;
+	unsigned int index = m_TextureCount;
 	if (!m_textureList){
 		m_textureList = new meshTexture[1];
 		if (!m_textureList){
@@ -618,8 +609,8 @@ int D3DRender::AddTexture2D(wchar_t* file, int* texID) {
 		}
 	}else {
 		meshTexture* temp;
-		temp = new meshTexture[m_TexturesCount + 1];
-		memcpy(temp, m_textureList, sizeof(meshTexture)*m_TexturesCount);
+		temp = new meshTexture[m_TextureCount + 1];
+		memcpy(temp, m_textureList, sizeof(meshTexture)*m_TextureCount);
 
 		delete[] m_textureList;
 		m_textureList = temp;
@@ -637,8 +628,8 @@ int D3DRender::AddTexture2D(wchar_t* file, int* texID) {
 	}
 	m_textureList[index].width = info.Width;
 	m_textureList[index].height = info.Height;
-	*texID = m_TexturesCount;
-	m_TexturesCount++;
+	*texID = m_TextureCount;
+	m_TextureCount++;
 	return 1;
 }
 
@@ -756,7 +747,7 @@ int D3DRender::GetScreenHeight() {
 	 return true;
 }
 
- bool D3DRender::AddGUIBackTexure(int GUIID, WCHAR* fileName){
+ bool D3DRender::AddGUIBackTexure(int GUIID, LPCWSTR fileName){
 	 if (GUIID>=GUICount) return false;
 	 int texID = -1;
 	 int staticTexIDs = -1;
@@ -771,11 +762,11 @@ int D3DRender::GetScreenHeight() {
 	 if (!CreateStaticBuffer(D3DFVF_GUI, TRANGLE_STRIP, 4, 0, sizeof(GUIVertex), (void**)&obj, NULL, &staticTexIDs)) return false;
 	 return GUIList[GUIID].AddBackDrop(texID, staticTexIDs);
  }
- bool D3DRender::AddGUIStaticText(int GUIID, int id, WCHAR* text, int x, int y, unsigned long color, int fontID){
+ bool D3DRender::AddGUIStaticText(int GUIID, int id, LPCWSTR text, int x, int y, unsigned long color, int fontID){
 	 if (GUIID>=GUICount) return false;
 	 return GUIList[GUIID].AddStaticText(id, text, x, y, color, fontID);
  }
- bool D3DRender::AddGUIButton(int GUIID, int id, int x, int y, WCHAR* up, WCHAR* over, WCHAR* down){
+ bool D3DRender::AddGUIButton(int GUIID, int id, int x, int y, LPCWSTR up, LPCWSTR over, LPCWSTR down){
 	 if (GUIID>=GUICount)return false;
 	 int upID = -1,overID=-1,downID=-1,staticID=-1;
 	 if (!AddTexture2D(up,&upID)) return false;
@@ -852,7 +843,7 @@ int D3DRender::GetScreenHeight() {
 	 }
  }
 
-bool  D3DRender::CreateText(WCHAR* font, int weight, int heigth, bool italic, int size, int &id){
+bool  D3DRender::CreateText(LPCWSTR font, int weight, int heigth, bool italic, int size, int &id){
 	if (!fontList){
 		fontList = new LPD3DXFONT[1];
 		if (!fontList) return false;
@@ -873,7 +864,7 @@ bool  D3DRender::CreateText(WCHAR* font, int weight, int heigth, bool italic, in
 	fontCount++;
 	return true;
 }
-void  D3DRender::DisplayText(int id, long x, long y, int r, int g, int b, WCHAR* text, ...){
+void  D3DRender::DisplayText(int id, long x, long y, int r, int g, int b, LPCWSTR text, ...){
 	RECT position = { x,y,m_screenWitdth,m_screenHeight };
 	WCHAR message[1024];
 	va_list argList;
@@ -887,7 +878,7 @@ void  D3DRender::DisplayText(int id, long x, long y, int r, int g, int b, WCHAR*
 	va_end(argList);
 	fontList[id]->DrawTextW(NULL, message, -1, &position, DT_SINGLELINE, D3DCOLOR_ARGB(255, r, g, b));
 }
-void  D3DRender::DisplayText(int id, long x, long y, unsigned long color, WCHAR* text, ...){
+void  D3DRender::DisplayText(int id, long x, long y, unsigned long color, LPCWSTR text, ...){
 	RECT position = { x,y,m_screenWitdth,m_screenHeight };
 	WCHAR message[1024];
 	va_list argList;
