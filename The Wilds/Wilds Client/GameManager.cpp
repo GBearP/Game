@@ -40,8 +40,6 @@ bool GameManager::InitEngine(FULLSCREEN show) {
 //初始化游戏
 bool GameManager::InitGame() {
 	device = (IDirect3DDevice9*)(gameRender->GetDevice());
-	//GUI = new CD3DGUISystem(device, hWnd, WIN_WIDTH, WIN_HEIGHT);
-	//UIManager.Show();
 	return true;
 }
 //开始游戏循环
@@ -49,7 +47,7 @@ void GameManager::GameLoop() {
 	if (!gameRender) {
 		return;
 	}
-	gameRender->StartRender(1, 1, 0);
+	gameRender-> ClearBuffer(1, 1, 0);
 	//gameRender->ClearBuffer();  //如果有必要,渲染开始时清除缓存
 	//游戏内循环,模型,灯光,贴图在这里添加
 }

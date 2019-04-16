@@ -18,28 +18,21 @@ int g_creditGUI = -1;
 int g_currentGUI = GUI_MAIN_SCREEN;
 
 int arialID = -1;
-bool LMBDown = -1;
+int LMBDown = -1;
 int mouseX = 0, mouseY = 0;
 wchar_t* fontType = (wchar_t*)L"Arial";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 bool InitMainMenu(GameManager& gameManager) {
-	if (!gameManager.GetGameRender()->CreateText(fontType,18,12,true,10,arialID))
-	{
+	if (!gameManager.GetGameRender()->CreateText(fontType,18,12,true,10,arialID)){
 		MessageBox(0, 0,L"CreateTextError", 0);
 		return false;
 	}
 	if (!gameManager.GetGameRender()->CreateGUI(g_mainGUI)) {
-		MessageBox(0, 0, L"CreateGUIError", 0);
 		return false;
 	}
 
-	if (!gameManager.GetGameRender()->AddGUIBackTexure(g_mainGUI, (wchar_t*)L"EnterUI.jpg")) {
-		if (!gameManager.GetGameRender()->GetGUIList())
-		{
-			MessageBox(0, 0, L"GUIListNull", 0);
-		}
-		MessageBox(0, 0,L"AddGUIBackTexureERROR",0);
+	if (!gameManager.GetGameRender()->AddGUIBackTexure(g_mainGUI, L"EnterUI.jpg")) {
 		return false;
 	}
 	return true;
@@ -75,7 +68,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 			}
 			else{
 				gameManager.GameLoop();
-		//gameManager.ProcessGUI(0,0,0,NULL);
+				
+				MainMenuRender(gameManager);
 				gameManager.EndLoop();
 			}
 		}

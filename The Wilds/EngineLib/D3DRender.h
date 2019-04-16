@@ -66,7 +66,7 @@ public:
 	
 	//渲染所需的设置灯光,材质,贴图的方法
 	void* GetDevice() { return m_Direct3DDevice; }
-	void CalculateProjMatrix(float fov, float n, float f);
+	/*void CalculateProjMatrix(float fov, float n, float f);
 	void CalculateOrhtojMatrix(float n, float f);
 	void StartRender(bool bColor, bool bDepth, bool bstencil);
 	void EndRender();
@@ -81,20 +81,22 @@ public:
 	void SetTranspancy(RenderState state, TransState src, TransState dst);
 	void EnablePointSprites(float size, float min, float a, float b, float c);
 	void DisableSprites();
-	void SaveScreenShot(wchar_t* file);
-	int AddTexture2D(LPCWSTR file, int* texID);
-	void ApplyTexture(int index, int texID);
 	void SetMultiTexture();
+	void SaveScreenShot(wchar_t* file);*/
+
+	//GUI部分
+	/*int AddTexture2D(LPCWSTR file, int* texID);
+	void ApplyTexture(int index, int texID);
 	virtual int GetScreenWidth();
 	virtual	int GetScreenHeight();
 	virtual bool CreateGUI(int& id);
-	virtual bool AddGUIBackTexure(int GUIID, LPCWSTR fileName);
-	virtual bool AddGUIStaticText(int GUIID, int id, LPCWSTR text, int x, int y, unsigned long color, int fontID);
-	virtual bool AddGUIButton(int GUIID, int id, int x, int y, LPCWSTR up, LPCWSTR over, LPCWSTR down);
-	virtual void ProcessGUI(int GUIID, bool LMBDwon, int mouseX, int mouseY, void(*funcPtr)(int id, int state));
+	virtual bool AddGUIBackTexure(int id_GUI, LPCWSTR fileName);
+	virtual bool AddGUIStaticText(int id_GUI, int id, LPCWSTR text, int x, int y, unsigned long color, int fontID);
+	virtual bool AddGUIButton(int id_GUI, int id, int x, int y, LPCWSTR up, LPCWSTR over, LPCWSTR down);
+	virtual void ProcessGUI(int id_GUI, bool LMBDwon, int mouseX, int mouseY, void(*funcPtr)(int id, int state));
 	virtual bool CreateText(LPCWSTR font, int weigth, int heigth, bool italic, int size, int &id) ;
 	virtual void DisplayText(int id, long x, long y, int r, int g, int b, LPCWSTR text, ...) ;
-	virtual void DisplayText(int id, long x, long y, unsigned long color, LPCWSTR text, ...) ;
+	virtual void DisplayText(int id, long x, long y, unsigned long color, LPCWSTR text, ...) ;*/
 };
 
 

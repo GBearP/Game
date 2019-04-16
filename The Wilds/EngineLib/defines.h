@@ -1,5 +1,4 @@
 #pragma once
-#define UNICODE
 
 #ifndef DEFINES_H
 #define DEFINES_H
