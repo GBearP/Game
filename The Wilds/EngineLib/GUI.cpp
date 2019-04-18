@@ -178,7 +178,6 @@ bool GUISystem::AddControl() {
 
 bool GUISystem::AddBackDrop(int texID, int sID) {
 	if (texID < 0 || sID < 0) return false;
-	//m_mainBackDrop.m_type = BACKDROP;
 	if (m_backDropID < 0){
 		if (!AddControl())return false;
 		p_controls[controlsCount].m_type = BACKDROP;

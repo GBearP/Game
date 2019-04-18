@@ -4,6 +4,6 @@
 
 #include "RenderInterface.h"
 #include "D3DRender.h"
-#include"GUI.h"
-#include"AudioManager.h"
+//#include"GUI.h"
+//#include"AudioManager.h"
 #endif

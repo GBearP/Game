@@ -14,7 +14,7 @@ private:
 	//AudioManager audioManager;
 	RenderInterface* gameRender;
 	HWND hWnd = NULL;
-	IDirect3DDevice9* device;
+	//IDirect3DDevice9* device;
 	
 public:
 	GameManager() = default;
@@ -33,8 +33,6 @@ public:
 	//
 	void LoadScene();
 
-	void CloseGame() {};
-	void CloseEngine() {};
 	HWND GetHwnd() {
 		return hWnd;
 	}

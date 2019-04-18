@@ -3,11 +3,14 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define WINDOW_CLASS L"The Wilds"
-#define WINDOW_NAME L"Wilds"
+
+#define UGP_INVALID -1
+#define UGP_OK 1
+#define UGP_FAIL 0
+
 
 #define GRAVITY 9.8
-#define WinHWND HWND
+//#define WinHWND HWND
 
 #define SPOTLIGHT 1
 #define DIRECTLIGHT 2
@@ -15,16 +18,23 @@
 typedef long Vertextype;
 
 
-enum PrimType
-{
-	NULL_TYPE,POIST_LIST,TRANGLE_LIST,TRANGLE_STRIP,TRANGLE_FAN,LINE_STRIP,LINE_LIST,
+enum PrimType{
+	NULL_TYPE,
+	POIST_LIST,
+	LINE_STRIP,LINE_LIST,
+	TRANGLE_LIST,TRANGLE_STRIP,TRANGLE_FAN
 };
 
-enum RenderState
-{
+/*
+#define UGPCOLOR_ARGB(a,r,g,b) ((unsigned long))((((a)&0xff)<24) | \
+								(((r)&0xff)<<16) | (((g)&0xff)<<8) |\
+								(((b)&0xff)))
+*/
+
+enum RenderState{
 	CULL_NONE,
-	CULL_CW,
-	CULL_CCW,
+	CULL_CW,//ÌÞ³ýË³Ê±ÕëµÄ¶¥µã
+	CULL_CCW,//ÌÞ³ýÄæÊ±ÕëµÄ¶¥µã
 	DEPTH_NONE,
 	DEPTH_READONLY,
 	DEPTH_READWRITE,
@@ -36,8 +46,7 @@ enum RenderState
 	TRANSPARENCY_ENABLE
 };
 
-enum  TransState
-{
+enum  TransState{
 	TRANS_ZERO=1,
 	TRANS_ONE,
 	TRANS_SRCCOLOR,
