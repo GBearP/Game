@@ -30,13 +30,12 @@ private:
 	//AudioManager audioManager;
 	HWND hWnd = NULL;
 	SCREENMODE show = WIN;
-	int arialID = -1;
-	int LMBDown = -1;
-	int mouseX = 0, mouseY = 0;
+
 	int g_mainGUI = -1;
 	int g_startGUI = -1;
 	int g_creditGUI = -1;
 	int g_currentGUI = GUI_MAIN_SCREEN;
+	int arialID = -1;
 public:
 	RenderInterface* gameRender = NULL;
 	GameManager() = default;
@@ -66,10 +65,15 @@ public:
 
 	/*****************  UI *******************/
 	bool InitMainMenu() {
-		/*if (!gameRender->CreateText(L"Arial", 18, 12, true, 10, arialID)) {
+		if (!gameRender->CreateText(L"Arial", 18, 12, true, 10, arialID)) {
 			MessageBox(0, 0, L"CreateTextError", 0);
 			return false;
-		}*/
+		}
+		if (!gameRender->CreateGUI(g_mainGUI)) {
+			MessageBox(0, 0, L"CreateGUI ERROR", 0);
+			return false;
+		}
+		//完整的文件
 		if (!gameRender->CreateGUI(g_mainGUI)) {
 			MessageBox(0, 0, L"CreateGUI ERROR", 0);
 			return false;
@@ -84,17 +88,17 @@ public:
 		if (g_currentGUI == GUI_MAIN_SCREEN)
 		{
 			MessageBox(0, 0, L"2t", 9);
-			gameRender->ProcessGUI(g_mainGUI, LMBDown, mouseX, mouseY, NULL);
+			//gameRender->ProcessGUI(g_mainGUI, LMBDown, mouseX, mouseY, NULL);
 		}
 	}
 	void MainCallback(int id, int state) {
 
 	}
-	void SetCursor(int x, int y,int t_LMBDown) {
+	/*void SetCursorState(int x, int y,int t_LMBDown) {
 		mouseX = x;
 		mouseY = y;
 		int LMBDown = t_LMBDown;
-	}
+	}*/
 };
 
 

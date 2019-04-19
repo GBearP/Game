@@ -1,7 +1,8 @@
 #include <Windows.h>
 #include"GameManager.h"
 
-
+bool LMBDown = 0;
+int mouseX = 0, mouseY = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void (*p_DealUI)();
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int nCmdShow) {
@@ -24,7 +25,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 			}
 			else{
 				gameManager.GameLoop();
-				gameManager.MainMenuRender();
+				//gameManager.MainMenuRender();
+				gameManager.gameRender->ProcessGUI(-1, LMBDown, mouseX, mouseY, NULL);
+
 				gameManager.EndLoop();
 			}
 		}
@@ -55,16 +58,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	case WM_LBUTTONDOWN:
 		//p_DealUI();
+		LOWORD(wParam);
+		//SetCursorState(, int 1);
 		break;
 	case WM_MOUSEMOVE:
 		//p_DealUI();
+		mouseX = HIWORD(wParam);
+		mouseY = LOWORD(wParam);
 		break;
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)PostQuitMessage(0);
 		break;
 	case WM_LBUTTONUP:
 		//p_DealUI();
-		//LMBDown = false;
+		LMBDown = false;
 		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);

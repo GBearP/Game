@@ -644,7 +644,7 @@ void D3DRender::SetMultiTexture() {
 void D3DRender::ApplyTexture(int index, int texID) {
 	if (!m_Direct3DDevice)return;
 	if (index<0||texID<0){
-		MessageBox(0, 0, L"index<0||texID<0", 0);
+		//MessageBox(0, 0, L"index<0||texID<0", 0);
 		m_Direct3DDevice->SetTexture(0, NULL);
 	}else {
 		m_Direct3DDevice->SetTexture(index, m_textureList[index].image);
