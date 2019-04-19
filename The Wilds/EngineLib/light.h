@@ -16,9 +16,11 @@ struct dxLight
 	float attenuation1;
 	float attenuation2;
 	float theta;//¾Û¹âµÆÄÚ×¶ÐÎÔ²×¶½Ç
-	float thi;//Íâ×¶ÐÎÔ²×¶½Ç
+	float phi;//Íâ×¶ÐÎÔ²×¶½Ç
 	dxLight() {
-		type = 0; posX = 0; posY = 0; posZ = 0; dirX = 0; dirY = 0; dirZ = 0;
+		type = 0; 
+		posX = 0; posY = 0; posZ = 0; 
+		dirX = 0; dirY = 0; dirZ = 0;
 		ambientR = ambientG = ambientB = ambientA = 1;
 		diffuseR = diffuseG = diffuseB = diffuseA = 1;
 		specularR = specularG = specularB = specularA = 0;
@@ -28,7 +30,7 @@ struct dxLight
 		attenuation1 = 0;
 		attenuation2 = 0;
 		theta = 0;
-		thi = 0;
+		phi = 0;
 	}
 };
 #endif // !LIGHT_H
