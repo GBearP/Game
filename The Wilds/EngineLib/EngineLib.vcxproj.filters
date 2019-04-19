@@ -36,9 +36,6 @@
     <ClInclude Include="D3DRender.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AudioManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUI.cpp">

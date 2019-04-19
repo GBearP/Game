@@ -9,19 +9,19 @@
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 
-enum FULLSCREEN
+enum SCREENMODE
 {
 	WIN, FULL
 };
 
 #define D3DFVF_GUI (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 //用以存储图元信息
-struct StaticVertexBuffer {
-	StaticVertexBuffer() :pt_VertexBuffer(0), pt_IndexBuffer(0), numVertexs(0), numIndex(0), fvf(0), primType(NULL_TYPE) {}
+struct StaticPrimitiveBuffer {
+	StaticPrimitiveBuffer() :pt_VertexBuffer(0), pt_IndexBuffer(0), numVertexs(0), numIndex(0), fvf(0), primType(NULL_TYPE) {}
 	LPDIRECT3DVERTEXBUFFER9 pt_VertexBuffer;//顶点缓存指针
 	LPDIRECT3DINDEXBUFFER9  pt_IndexBuffer;//索引缓存指针
-	int numVertexs; //顶点数量
-	int numIndex; //索引缓存数量
+	unsigned int numVertexs; //顶点数量
+	unsigned int numIndex; //索引数量
 	int stride;
 	unsigned long fvf;//灵活顶点模式
 	PrimType primType;//图元类型 三角、线等
@@ -29,7 +29,7 @@ struct StaticVertexBuffer {
 
 //用以存储贴图信息
 struct meshTexture{
-	wchar_t* fileName;
+	WCHAR* fileName;
 	int width, height;
 	IDirect3DTexture9* image;
 };
@@ -40,21 +40,27 @@ struct meshTexture{
 class D3DRender :public RenderInterface
 {
 private:
-	StaticVertexBuffer* m_StaticBufferList;
-	meshTexture* m_textureList;
-	D3DCOLOR m_color;
-	D3DMATERIAL9* m_materialList;
-	D3DLIGHT9* lightList;
-	LPD3DXFONT* fontList;
-
 	LPDIRECT3D9 m_Direct3D;
 	LPDIRECT3DDEVICE9 m_Direct3DDevice;
-	bool m_rengderingScene;
+
+	//图元列表
+	StaticPrimitiveBuffer* m_StaticBufferList;
 	int m_StaticBufferCount;
 	int m_ActiveBufferCount;
+	
+	//贴图列表和材质计数
+	meshTexture* m_textureList;
+	D3DCOLOR m_color;
 	unsigned int m_TextureCount;
+	D3DMATERIAL9* m_materialList;
 	
+	//灯光列表
+	D3DLIGHT9* lightList;
 	
+	//字体列表
+	LPD3DXFONT* fontList;
+
+	bool m_rengderingScene;
 public:
 	D3DRender();
 	~D3DRender();
@@ -64,28 +70,11 @@ public:
 	void OneTimeInit();//设置初始渲染状态
 	void SetBackColor(float r, float g, float b);
 	
-	//渲染所需的设置灯光,材质,贴图的方法
-	void* GetDevice() { return m_Direct3DDevice; }
-	/*void CalculateProjMatrix(float fov, float n, float f);
-	void CalculateOrhtojMatrix(float n, float f);
-	void StartRender(bool bColor, bool bDepth, bool bstencil);
-	void EndRender();
-	void ClearBuffer(bool bColor, bool bDepth, bool bstencil);
+	//创建静态缓存
 	bool CreateStaticBuffer(Vertextype vTpye, PrimType primType, int totalVertex, int totalIndices, int stride, void** data, unsigned int* indices, int* staticID);
-	void ShutDown();
-	void Render(int staticID);
-	void SetMaterial(dxMaterial* mat);
-	void SetLight(dxLight* light, int lightIndex);
-	void DisableLight(int index);
-	void SetTextureFilter(int index, int filter, int val);
-	void SetTranspancy(RenderState state, TransState src, TransState dst);
-	void EnablePointSprites(float size, float min, float a, float b, float c);
-	void DisableSprites();
-	void SetMultiTexture();
-	void SaveScreenShot(wchar_t* file);*/
 
 	//GUI部分
-	/*int AddTexture2D(LPCWSTR file, int* texID);
+	int AddTexture2D(LPCWSTR file, int* texID);
 	void ApplyTexture(int index, int texID);
 	virtual int GetScreenWidth();
 	virtual	int GetScreenHeight();
@@ -96,7 +85,27 @@ public:
 	virtual void ProcessGUI(int id_GUI, bool LMBDwon, int mouseX, int mouseY, void(*funcPtr)(int id, int state));
 	virtual bool CreateText(LPCWSTR font, int weigth, int heigth, bool italic, int size, int &id) ;
 	virtual void DisplayText(int id, long x, long y, int r, int g, int b, LPCWSTR text, ...) ;
-	virtual void DisplayText(int id, long x, long y, unsigned long color, LPCWSTR text, ...) ;*/
+	virtual void DisplayText(int id, long x, long y, unsigned long color, LPCWSTR text, ...) ;
+
+	//渲染所需的设置灯光,材质,贴图的方法
+	void SetMaterial(dxMaterial* mat);
+	void SetLight(dxLight* light, int lightIndex);
+	void DisableLight(int index);
+	void SetTextureFilter(int index, int filter, int val);
+	void SetTranspancy(RenderState state, TransState src, TransState dst);
+	void EnablePointSprites(float size, float min, float a, float b, float c);
+	void DisableSprites();
+	void SetMultiTexture();
+	void SaveScreenShot(wchar_t* file);
+
+	//渲染的设置
+	void CalculateProjMatrix(float fov, float n, float f);
+	void CalculateOrhtojMatrix(float n, float f);
+	void StartRender(bool bColor, bool bDepth, bool bstencil);
+	void EndRender();
+	void ClearBuffer(bool bColor, bool bDepth, bool bstencil);
+	void ShutDown();
+	void Render(int staticID);
 };
 
 

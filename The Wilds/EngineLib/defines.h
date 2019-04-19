@@ -15,13 +15,14 @@
 typedef long Vertextype;
 
 
-enum PrimType
-{
-	NULL_TYPE,POIST_LIST,TRANGLE_LIST,TRANGLE_STRIP,TRANGLE_FAN,LINE_STRIP,LINE_LIST,
+enum PrimType{
+	NULL_TYPE,
+	POIST_LIST,TRANGLE_LIST,
+	TRANGLE_STRIP,TRANGLE_FAN,LINE_STRIP,
+	LINE_LIST,
 };
 
-enum RenderState
-{
+enum RenderState{
 	CULL_NONE,
 	CULL_CW,
 	CULL_CCW,
@@ -36,8 +37,7 @@ enum RenderState
 	TRANSPARENCY_ENABLE
 };
 
-enum  TransState
-{
+enum  TransState{
 	TRANS_ZERO=1,
 	TRANS_ONE,
 	TRANS_SRCCOLOR,
@@ -52,14 +52,14 @@ enum  TransState
 	TRANS_BLENDFACTOR,
 	TRANS_INVBLENDFACTOR
 };
+
 enum TextureState {
 	MIN_FILTER,
 	MAG_FILTER,
 	MIP_FILTER
 };
 
-enum FilterType
-{
+enum FilterType{
 	POINT_TYPE,
 	LINEAR_TYPE,
 	ANISOTROPIC_TYPE

@@ -130,7 +130,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="D3DRender.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="engine.h" />
