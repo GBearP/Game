@@ -15,33 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RenderInterface.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="material.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="light.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="engine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="defines.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="D3DRender.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="GUI.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3DRender.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
